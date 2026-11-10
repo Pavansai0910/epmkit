@@ -1,8 +1,8 @@
 line-length = 110
 
 [lint.flake8-bugbear]
-# typer.Option()/typer.Argument() in defaults is Typer's documented pattern.
-extend-immutable-calls = ["typer.Option", "typer.Argument"]
+# Typer and FastAPI both use calls in parameter defaults by design.
+extend-immutable-calls = ["typer.Option", "typer.Argument", "fastapi.Depends"]
 
 [lint.per-file-ignores]
 # __all__ is kept in the order given in the spec.
