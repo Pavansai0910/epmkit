@@ -1,0 +1,11 @@
+line-length = 110
+
+[lint.flake8-bugbear]
+# typer.Option()/typer.Argument() in defaults is Typer's documented pattern.
+extend-immutable-calls = ["typer.Option", "typer.Argument"]
+
+[lint.per-file-ignores]
+# __all__ is kept in the order given in the spec.
+"src/epmkit/__init__.py" = ["RUF022"]
+# __enter__ -> EPMClient is fine for a non-subclassed client; Self needs 3.11.
+"src/epmkit/client.py" = ["PYI034"]
