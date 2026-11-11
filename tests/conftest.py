@@ -24,5 +24,12 @@ def client(mock_api):
         yield epm
 
 
+@pytest.fixture
+def retrying_client(mock_api):
+    """Client with retries on and zero backoff, so retry tests don't sleep."""
+    with EPMClient(BASE_URL, "user", "secret", max_retries=2, backoff=0) as epm:
+        yield epm
+
+
 def job_payload(status: int, desc: str, details: str | None = None, job_id: int = 7, name: str = "AggAll"):
     return {"jobId": job_id, "jobName": name, "status": status, "descriptiveStatus": desc, "details": details}

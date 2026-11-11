@@ -9,7 +9,7 @@ from typing import Any
 import httpx
 
 from .auth import basic_auth
-from .exceptions import EPMAuthError, EPMError
+from .exceptions import EPMAuthError, EPMError, EPMNotFound
 from .files import Files
 from .planning import Planning
 
@@ -90,7 +90,8 @@ class EPMClient:
             )
         if response.is_error:
             body = _body(response)
-            raise EPMError(
+            error_cls = EPMNotFound if response.status_code == 404 else EPMError
+            raise error_cls(
                 f"{method} {path} -> HTTP {response.status_code}: {_detail(body)}",
                 status_code=response.status_code,
                 body=body,

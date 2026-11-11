@@ -25,6 +25,10 @@ class EPMAuthError(EPMError):
     """The server rejected the credentials (HTTP 401 or 403)."""
 
 
+class EPMNotFound(EPMError):
+    """The application, cube, job or file does not exist (HTTP 404)."""
+
+
 class EPMJobFailed(EPMError):
     """A job finished, but not successfully (error, cancelled, invalid parameters)."""
 
