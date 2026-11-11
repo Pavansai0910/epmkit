@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Lint + tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+          enable-cache: true
+
+      - name: Install dependencies (exact versions from uv.lock)
+        run: uv sync --locked --all-extras
+
+      - name: Lint
+        run: uv run ruff check .
+
+      - name: Unit tests
+        run: uv run pytest -q
+
+  smoke:
+    name: End-to-end smoke test against the mock server
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+          enable-cache: true
+
+      - run: uv sync --locked --all-extras
+
+      - name: Start mock EPM server
+        run: |
+          uv run uvicorn mock_server.app:app --port 8000 &
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:8000/docs > /dev/null && exit 0
+            sleep 1
+          done
+          echo "mock server did not start" && exit 1
+
+      - name: Run smoke script
+        run: uv run python scripts/smoke.py
+
+      - name: Run CLI
+        env:
+          EPM_URL: http://localhost:8000
+          EPM_USER: demo
+          EPM_PASSWORD: demo
+        run: uv run epmkit run-rule Plan1 AggAll
