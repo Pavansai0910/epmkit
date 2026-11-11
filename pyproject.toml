@@ -5,6 +5,8 @@ description = "Unofficial Python SDK for Oracle EPM Cloud REST APIs"
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
+authors = [{ name = "Pavan Sai" }]
+keywords = ["oracle", "epm", "epm-cloud", "hyperion", "planning", "sdk"]
 dependencies = ["httpx>=0.27", "pydantic>=2.6"]
 
 [project.optional-dependencies]
@@ -13,6 +15,11 @@ cli = ["typer>=0.12"]
 
 [project.scripts]
 epmkit = "epmkit.cli:app"
+
+[project.urls]
+Homepage = "https://github.com/Pavansai0910/epmkit"
+Repository = "https://github.com/Pavansai0910/epmkit"
+Issues = "https://github.com/Pavansai0910/epmkit/issues"
 
 [dependency-groups]
 dev = ["pytest>=8", "respx>=0.21", "ruff>=0.5", "fastapi>=0.110", "uvicorn>=0.29", "pandas>=2.0", "typer>=0.12"]
